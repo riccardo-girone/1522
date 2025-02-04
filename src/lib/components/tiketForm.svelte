@@ -158,7 +158,6 @@
 
 	input[type="text"],
 	input[type="email"],
-	input[type="tel"],
 	select,
 	textarea {
 		width: 100%;
@@ -212,7 +211,6 @@
 
 		input[type="text"],
 		input[type="email"],
-		input[type="tel"],
 		select,
 		textarea {
 			padding: 0.625rem;
