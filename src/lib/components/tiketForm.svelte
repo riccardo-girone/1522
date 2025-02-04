@@ -1,12 +1,11 @@
 <script>
 	import { onMount } from "svelte";
 
-	let nome;
-	let cognome;
-	let telefono;
-	let email;
-	let tipoProblema;
-	let richiesta;
+	let data = "";
+	let nome = "";
+	let contatto = "";
+	let tipoProblema = "";
+	let richiesta = "";
 
 	const tipiProblema = [
 		{ value: "violenzaDomestica", label: "violenza domestica" },
@@ -15,18 +14,42 @@
 		{ value: "altro", label: "altro" },
 	];
 
-	function handleSubmit() {
-		const formData = {
-			nome,
-			cognome,
-			telefono,
-			email,
-			tipoProblema,
-			richiesta,
-		};
+	const handleSubmit = async () => {
+		let errorMessages = [];
 
-		console.log("Form dati:", formData);
-	}
+		if (errorMessages.length == 0) {
+			try {
+				const response = await fetch(
+					"http://localhost:3001/richieste",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							data_ora: data,
+							nome_vittima: nome,
+							contatto_vittima: contatto,
+							tipo_di_violenza: tipoProblema,
+							descrizione_richiesta: richiesta,
+						}),
+					},
+				);
+
+				const result = await response.json();
+
+				if (response.ok) {
+					alert("Ticket inviato con successo!");
+				} else {
+					alert("Errore nell'invio del ticket: " + result.error);
+				}
+			} catch (error) {
+				alert("Errore di connessione al server: " + error.message);
+			}
+		} else {
+			alert(errorMessages.join("\n"));
+		}
+	};
 </script>
 
 <div class="content">
@@ -38,7 +61,12 @@
 	<form class="form" on:submit|preventDefault={handleSubmit}>
 		<div class="formWrapper">
 			<div class="formComponent">
-				<label for="nome">Nome</label>
+				<label for="nome">data</label>
+				<input type="datetime-local" id="data" bind:value={data} />
+			</div>
+
+			<div class="formComponent">
+				<label for="nome">nome</label>
 				<input
 					type="text"
 					id="nome"
@@ -48,31 +76,11 @@
 			</div>
 
 			<div class="formComponent">
-				<label for="cognome">Cognome</label>
-				<input
-					type="text"
-					id="cognome"
-					bind:value={cognome}
-					placeholder="Il tuo cognome"
-				/>
-			</div>
-
-			<div class="formComponent">
-				<label for="telefono">Numero di telefono</label>
-				<input
-					type="tel"
-					id="telefono"
-					bind:value={telefono}
-					placeholder="+39 123 4567890"
-				/>
-			</div>
-
-			<div class="formComponent">
-				<label for="email">Email</label>
+				<label for="contatto">Mail</label>
 				<input
 					type="email"
-					id="email"
-					bind:value={email}
+					id="contatto"
+					bind:value={contatto}
 					placeholder="esempio@email.it"
 				/>
 			</div>
@@ -93,14 +101,16 @@
 					id="richiesta"
 					bind:value={richiesta}
 					placeholder="Descrivi il tuo problema..."
-					maxlength="500"
+					maxlength="1500"
 				></textarea>
 				<div class="caratteri-rimasti">
-					Caratteri rimasti: {500 - (richiesta?.length || 0)}
+					Caratteri rimasti: {1500 - (richiesta?.length || 0)}
 				</div>
 			</div>
 
-			<button type="submit" class="submitButton"> Invia </button>
+			<button type="submit" class="submitButton" on:click={handleSubmit}>
+				Invia
+			</button>
 		</div>
 	</form>
 </div>

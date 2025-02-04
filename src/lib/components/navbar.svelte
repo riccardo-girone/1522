@@ -1,6 +1,6 @@
 <div class="navContainer">
 	<div class="logo">
-		<div>logo</div>
+		<div><a href="/">logo</a></div>
 	</div>
 
 	<div class="linkContainer">

@@ -5,11 +5,6 @@
 		<a href="/tiket">
 			<div class="button">ticket</div>
 		</a>
-
-		<!-- <div>
-			una volta mandata la richiesta di aiuto ti contatteremo con i
-			contatti che inserierai
-		</div> -->
 	</div>
 </div>
 
