@@ -40,6 +40,12 @@
 
 				if (response.ok) {
 					alert("Ticket inviato con successo!");
+
+					data = "";
+					nome = "";
+					contatto = "";
+					tipoProblema = "";
+					richiesta = "";
 				} else {
 					alert("Errore nell'invio del ticket: " + result.error);
 				}
@@ -108,9 +114,7 @@
 				</div>
 			</div>
 
-			<button type="submit" class="submitButton" on:click={handleSubmit}>
-				Invia
-			</button>
+			<button type="submit" class="submitButton"> Invia </button>
 		</div>
 	</form>
 </div>

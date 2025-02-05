@@ -1,29 +1,36 @@
 <script>
 	import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
 
-	let email;
-	let password;
+	let email = "";
+	let password = "";
 	let error = "";
 
-	function handleSubmit() {
-		if (!email || !password) {
-			error = "Per favore, inserisci sia l'email che la password";
-			return;
-		}
+	const handleLogin = async () => {
+		try {
+			const response = await fetch("http://localhost:3001/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email, password }),
+			});
 
-		if (!email.includes("@")) {
-			error = "Email non valida";
-			return;
-		}
+			const result = await response.json();
 
-		error = "";
-		console.log("Login dati:", { email, password });
-	}
+			if (response.ok) {
+				localStorage.setItem("user", JSON.stringify(result.user));
+				window.location.href = "/admin";
+			} else {
+				alert("Credenziali errate!");
+			}
+		} catch (error) {
+			console.error("Errore di connessione:", error);
+		}
+	};
 </script>
 
 <div class="content">
 	<h1>Accedi</h1>
-	<form class="form" on:submit|preventDefault={handleSubmit}>
+	<form class="form" on:submit|preventDefault={handleLogin}>
 		<div class="formWrapper">
 			<div class="formComponent">
 				<label for="email">Email</label>
@@ -32,28 +39,24 @@
 					id="email"
 					bind:value={email}
 					placeholder="esempio@email.it"
-					aria-required="true"
 				/>
 			</div>
 
 			<div class="formComponent">
 				<label for="password">Password</label>
 				<input
-					type="text"
+					type="password"
 					id="password"
 					bind:value={password}
 					placeholder="Password"
-					aria-required="true"
 				/>
 			</div>
 
 			{#if error}
-				<div class="error-message" role="alert">
-					{error}
-				</div>
+				<div class="error-message">{error}</div>
 			{/if}
 
-			<button type="submit" class="submitButton"> Accedi </button>
+			<button type="submit" class="submitButton">Accedi</button>
 		</div>
 	</form>
 </div>
@@ -110,7 +113,7 @@
 	}
 
 	.error-message {
-		color: #dc3545;
+		color: red;
 		font-size: 0.875rem;
 		margin-top: 0.5rem;
 	}
